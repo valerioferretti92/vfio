@@ -1,0 +1,23 @@
+:root {
+    --floral-white: #fffcf2;
+    --dust-grey: #ccc5b9;
+    --charcoal-brown: #403d39;
+    --carbon-black: #252422;
+    --spicy-paprika: #eb5e28;
+
+    --strava: #fc8533;
+    --linkedin: #0a85c2;
+    --github: #986ee2;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "system-ui", "sans-serif";
+    color: var(--carbon-black);
+    background-color: var(--floral-white);
+}

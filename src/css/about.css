@@ -1,0 +1,10 @@
+.about {
+    flex-grow: 1;
+    width: 100%;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.about h3 {
+    text-transform: uppercase;
+}

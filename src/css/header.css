@@ -1,0 +1,51 @@
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    color: var(--dust-grey);
+    background-color: var(--carbon-black);
+    width: 100%;
+}
+
+.header .me {
+    flex: 1;
+    text-align: left;
+}
+
+.header .me h3 {
+    text-transform: uppercase;
+}
+
+.header .nav {
+    flex: 1;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+.header .ext {
+    flex: 2;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.header .ext svg {
+    width: 2rem;
+    height: auto;
+    color: var(--dust-grey);
+}
+
+.header .ext .strava:hover {
+    color: var(--strava);
+}
+
+.header .ext .linkedin:hover {
+    color: var(--linkedin);
+}
+
+.header .ext .github:hover {
+    color: var(--github);
+}

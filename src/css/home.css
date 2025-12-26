@@ -1,0 +1,31 @@
+.home {
+    margin: 2rem auto 0;
+    max-width: 52rem;
+}
+
+.home {
+    flex-grow: 1;
+    width: 100%;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.home section {
+    margin-bottom: 2rem;
+}
+
+.home header {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgb(var(--dust-grey));
+}
+
+.home h4 {
+    text-transform: uppercase;
+}
+
+.home p {
+    margin: 0 0 1.25rem;
+    text-align: justify;
+    line-height: 1.5;
+}

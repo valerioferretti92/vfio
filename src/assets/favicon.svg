@@ -1,0 +1,25 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="1.1"
+    viewBox="0 0 200 200"
+>
+    <defs>
+        <linearGradient id="gradient" gradientTransform="rotate(45 0.5 0.5)">
+            <stop offset="0%" stop-color="#fffcf2" />
+            <stop offset="100%" stop-color="#ccc5b9" />
+        </linearGradient>
+    </defs>
+    <g>
+        <g
+            fill="#252422"
+            transform="matrix(7.554098360655738,0,0,7.554098360655738,10.219775616438653,153.70901521932882)"
+            stroke="#252422"
+            stroke-width="0.2"
+        >
+            <path
+                d="M3.77-14.22L6.59-3.87L9.42-14.22L13.25-14.22L8.47 0L4.72 0L-0.03-14.22L3.77-14.22ZM23.24-8.30L23.24-5.66L17.71-5.66L17.71 0L14.29 0L14.29-14.22L23.80-14.22L23.80-11.57L17.71-11.57L17.71-8.30L23.24-8.30Z"
+            />
+        </g>
+    </g>
+</svg>

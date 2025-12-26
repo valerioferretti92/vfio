@@ -4,8 +4,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem;
-    color: var(--dust-grey);
-    background-color: var(--carbon-black);
+    color: rgb(var(--dust-grey));
+    background-color: rgb(var(--carbon-black));
     width: 100%;
 }
 
@@ -35,17 +35,17 @@
 .header .ext svg {
     width: 2rem;
     height: auto;
-    color: var(--dust-grey);
+    color: rgb(var(--dust-grey));
 }
 
 .header .ext .strava:hover {
-    color: var(--strava);
+    color: rgb(var(--strava));
 }
 
 .header .ext .linkedin:hover {
-    color: var(--linkedin);
+    color: rgb(var(--linkedin));
 }
 
 .header .ext .github:hover {
-    color: var(--github);
+    color: rgb(var(--github));
 }

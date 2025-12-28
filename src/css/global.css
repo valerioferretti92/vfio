@@ -39,3 +39,15 @@ a:active {
 a:hover {
     color: rgb(var(--spicy-paprika));
 }
+
+.anchor,
+.anchor:visited,
+.anchor:active {
+    font-size: 1.1em;
+    text-decoration: none;
+    color: rgb(var(--dust-grey));
+}
+
+.anchor:hover {
+    color: rgb(var(--spicy-paprika));
+}

@@ -2,13 +2,75 @@
 layout: layouts/home.njk
 title: Home
 permalink: /
+artificialIntelligenceReadings:
+  - cover: "assets/build_a_large_language_model_from_scratch.png"
+    title: "Build a Large Language Model (From Scratch)"
+    author: "Sebastian Raschka"
+    link: "https://shorturl.at/RNHuU"
+    description: "Hands-on journey into the inner workings of generative AI, with PyTorch. This book walks you through each stage of LLM development to understand how models work under the hood, their limitations, and how to fine tune them."
+programmingLanguagesReadings:
+  - cover: "assets/the_go_programming_language.png"
+    title: "The Go Programming Language"
+    author: "Alan A. A. Donovan, Brian W. Kernighan"
+    link: "https://shorturl.at/R297a"
+    description: "Comprehensive introduction to the Go programming language for programmers. It explains Go’s core features, syntax, and concurrency model with clear examples. Focuses on writing efficient, reliable, and idiomatic Go software."
+  - cover: "assets/concurrency_in_go.png"
+    title: "Concurrency in Go"
+    author: "Katherine Cox-Buday"
+    link: "https://shorturl.at/PotCc"
+    description: "Deep dive into Go concurrency model. It explains practical tools and patterns for writing safe, efficient, and maintainable concurrent code, helping developers avoid common concurrency mistakes while improving performance and scalability."
+  - cover: "assets/springboot_in_action.png"
+    title: "Springboot in Action"
+    author: "Craig Walls"
+    link: "https://shorturl.at/nk7gd"
+    description: "Hands-on guide to building modern, production-ready Java applications using Spring Boot, covering configuration management, dependency injection, starter dependencies, and more."
+  - cover: "assets/fullstack_react.png"
+    title: "Fullstack React"
+    author: "Anthony Accomazzo, Ari Lerner, Clay Allsoap, David Guttman, Tyler McGinnis, Nate Murray"
+    link: "https://shorturl.at/iRaqL"
+    description: "Comprehensive guide to building modern web applications with React, covering both frontend and backend integration. It teaches practical techniques for creating scalable, maintainable, and interactive applications."
+  - cover: "assets/javascript_definitive_guide.png"
+    title: "Javascript The Definitive Guide"
+    author: "David Flanagan"
+    link: "https://shorturl.at/O33j6"
+    description: "Comprehensive reference to the JavaScript language, covering core syntax, semantics, and advanced features in depth. The book also explains how JavaScript interacts with browsers, the DOM, and web APIs."
+  - cover: "assets/rediscovering_javascript_es6_7_8.png"
+    title: "Rediscovering Javascript, ECMAScript 6, 7, and 8"
+    author: "Venkat Subramaniam"
+    link: "https://shorturl.at/nEtQk"
+    description: "Deep dive into JavaScript’s evolution, focusing on the features introduced in ES6, ES7, and ES8. It presents new syntax, functional programming patterns, and asynchronous programming, helping developers write cleaner, more efficient, and maintainable code."
+cloudComputingReadings:
+  - cover: "assets/kubernetes_in_action.png"
+    title: "Kubernetes in Action"
+    author: "Marko Luksa"
+    link: "https://shorturl.at/ppTdI"
+    description: "A practical, hands-on introduction to Kubernetes, explaining its core concepts and architecture. It demystifies container orchestration, making it easier to design and operate cloud-native systems with confidence"
+dataStoresReadings:
+  - cover: "assets/mongodb_definitive_guide.png"
+    title: "MongoDB the Definitive Guide"
+    author: "Kristina Chodorow"
+    link: "https://shorturl.at/Ld8DJ"
+    description: "MongoDB under the hood, from document modeling and indexing to replication and sharding enabling scalable, high-performance data models beyond traditional relational databases."
+  - cover: "assets/elasticsearch_definitive_guide.png"
+    title: "ElasticSearch the Definitive Guide"
+    author: "Clinton Gromley, Zachary Tong"
+    link: "https://shorturl.at/kqctT"
+    description: "Introduction tothe core concepts behind Elasticsearch, including indexing, querying, relevance scoring, and distributed search, to build fast, scalable search and analytics features on large volumes of data."
+eventDrivenProgrammingReadings:
+  - cover: "assets/kafka_definitive_guide.png"
+    title: "Kafka the Definitive Guide"
+    author: "Neha Narkhede, Gwen Shapira, Todd Palino"
+    link: "https://shorturl.at/mmi6K"
+    description: "Provides a clear, in-depth look at how Apache Kafka works, covering its core components, data flow, and distributed architecture. A very valuable resource for understanding the fundamentals of event-driven systems and building scalable, fault-tolerant applications."
 ---
 
-{% include "header.njk" %}
+{% include "header/header.njk" %}
 <main class="home">
     <section class="about">
         <header>
-            <h4>About Myself</h4>
+            <h4 id="about">
+                About Myself <a href="#about" class="anchor">#</a>
+            </h4>
         </header>
         <p>
             Hi, I’m Valerio Ferretti! I’m a passionate software
@@ -18,10 +80,11 @@ permalink: /
             I am a Linux aficionado and have been playing
             with Linux distros, window managers, and desktop
             environments for many years, finally settling on
-            KDE Plasma on Arch Linux. I just love the open
-            source philosophy and the opportunity to fully
-            own my system, occasionally break things 😬 and
-            learn from my mistakes.
+            <a style="color: #212529; font-weight: 700;" href="https://kde.org/plasma-desktop/">KDE Plasma</a> on
+            <a style="color: #1094D2; font-weight: 700;" href="https://archlinux.org/">Arch Linux</a>.
+            I just love the open source philosophy and the
+            opportunity to fully own my system, occasionally
+            break things 😬 and learn from my mistakes.
         </p>
         <p>
             I live in an alpine region 🏔️ in northern Italy
@@ -42,12 +105,60 @@ permalink: /
     </section>
     <section class="readings">
         <header>
-            <h4>Readings</h4>
+            <h4 id="readings">
+                Readings <a href="#readings" class="anchor">#</a>
+            </h4>
         </header>
         <p>
-            This is a collection of books and articles about
-            technology that I found interesting and that I
-            consider worth sharing
+            Continuous learning is essential in our industry.
+            Below is a list of readings that have greatly
+            benefited me since completing my university
+            studies.
         </p>
+
+        <details>
+            <summary>Artificial Intelligence</summary>
+            <div class="books">
+                {% for book in artificialIntelligenceReadings %}
+                    {% include "home/book.njk" %}
+                {% endfor %}
+            </div>
+        </details>
+
+        <details>
+            <summary>Programming Languages</summary>
+            <div class="books">
+                {% for book in programmingLanguagesReadings %}
+                    {% include "home/book.njk" %}
+                {% endfor %}
+            </div>
+        </details>
+
+        <details>
+            <summary>Cloud Computing</summary>
+            <div class="books">
+                {% for book in cloudComputingReadings %}
+                    {% include "home/book.njk" %}
+                {% endfor %}
+            </div>
+        </details>
+
+        <details>
+            <summary>Data Stores</summary>
+            <div class="books">
+                {% for book in dataStoresReadings %}
+                    {% include "home/book.njk" %}
+                {% endfor %}
+            </div>
+        </details>
+
+        <details>
+            <summary>Event driven programming</summary>
+            <div class="books">
+                {% for book in eventDrivenProgrammingReadings %}
+                    {% include "home/book.njk" %}
+                {% endfor %}
+            </div>
+        </details>
     </section>
 </main>

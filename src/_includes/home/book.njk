@@ -1,0 +1,22 @@
+<div class="book">
+    <img
+        src="{{ book.cover }}"
+        alt="{{ book.title }}"
+        class="cover" />
+
+    <div>
+        <a
+            href="{{ book.link }}"
+            target="_blank"
+            rel="noopener"
+            class="title">
+                {{ book.title }}
+            </a>
+
+            <span class="author">{{ book.author }}</span>
+
+            <span class="description">
+                {{ book.description }}
+            </span>
+    </div>
+</div>

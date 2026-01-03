@@ -1,51 +1,68 @@
 .header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem;
-    color: rgb(var(--dust-grey));
-    background-color: rgb(var(--carbon-black));
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  row-gap: 1.5rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  color: rgb(var(--dust-grey));
+  background-color: rgba(var(--carbon-black), 0.9);
+  width: 100%;
 }
 
 .header .me {
-    flex: 1;
-    text-align: left;
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
 }
 
 .header .me h3 {
-    text-transform: uppercase;
+  text-transform: uppercase;
 }
 
 .header .nav {
-    flex: 1;
-    text-align: right;
-    text-transform: uppercase;
+  flex: 1;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .header .me {
+    order: 1;
+  }
+
+  .header .nav {
+    order: 2;
+  }
+
+  .header .ext {
+    order: 3;
+  }
 }
 
 .header .ext {
-    flex: 2;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
+  flex: 2;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .header .ext svg {
-    width: 2rem;
-    height: auto;
-    color: rgb(var(--dust-grey));
+  width: 2rem;
+  height: auto;
+  color: rgb(var(--dust-grey));
 }
 
 .header .ext .strava:hover {
-    color: rgb(var(--strava));
+  color: rgb(var(--strava));
 }
 
 .header .ext .linkedin:hover {
-    color: rgb(var(--linkedin));
+  color: rgb(var(--linkedin));
 }
 
 .header .ext .github:hover {
-    color: rgb(var(--github));
+  color: rgb(var(--github));
 }

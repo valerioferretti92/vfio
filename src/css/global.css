@@ -1,53 +1,53 @@
 :root {
-    --floral-white: 255 252 242; /* #fffcf2 */
-    --dust-grey: 204 197 185; /* #ccc5b9 */
-    --charcoal-brown: 64 61 57; /* #403d39 */
-    --carbon-black: 37 36 34; /* #252422 */
-    --spicy-paprika: 235 94 40; /* #eb5e28 */
+  --floral-white: 255, 252, 242; /* #fffcf2 */
+  --dust-grey: 204, 197, 185; /* #ccc5b9 */
+  --charcoal-brown: 64, 61, 57; /* #403d39 */
+  --carbon-black: 37, 36, 34; /* #252422 */
+  --spicy-paprika: 235, 94, 40; /* #eb5e28 */
 
-    --strava: 252 133 51; /* #fc8533 */
-    --linkedin: 10 133 194; /* #0a85c2 */
-    --github: 152 110 226; /* #986ee2 */
+  --strava: 252 133 51; /* #fc8533 */
+  --linkedin: 10 133 194; /* #0a85c2 */
+  --github: 152 110 226; /* #986ee2 */
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: "system-ui", "sans-serif";
-    color: rgb(var(--carbon-black));
-    background-color: rgb(var(--floral-white));
+  font-family: "system-ui", "sans-serif";
+  color: rgb(var(--carbon-black));
+  background-color: rgb(var(--floral-white));
 }
 
 a {
-    color: inherit;
-    text-decoration: underline;
-    transition: color 0.2s ease;
+  color: inherit;
+  text-decoration: underline;
+  transition: color 0.2s ease;
 }
 
 a:visited {
-    color: inherit;
+  color: inherit;
 }
 
 a:active {
-    color: inherit;
+  color: inherit;
 }
 
 a:hover {
-    color: rgb(var(--spicy-paprika));
+  color: rgb(var(--spicy-paprika));
 }
 
 .anchor,
 .anchor:visited,
 .anchor:active {
-    font-size: 1.1em;
-    text-decoration: none;
-    color: rgb(var(--dust-grey));
+  font-size: 1.1em;
+  text-decoration: none;
+  color: rgb(var(--dust-grey));
 }
 
 .anchor:hover {
-    color: rgb(var(--spicy-paprika));
+  color: rgb(var(--spicy-paprika));
 }

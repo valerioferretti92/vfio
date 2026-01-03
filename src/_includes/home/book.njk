@@ -5,18 +5,21 @@
         class="cover" />
 
     <div>
-        <a
-            href="{{ book.link }}"
-            target="_blank"
-            rel="noopener"
-            class="title">
-                {{ book.title }}
-            </a>
+        <div>
+            <a
+                href="{{ book.link }}"
+                target="_blank"
+                rel="noopener"
+                class="title"
+                style="display: block;">
+                    {{ book.title }}
+                </a>
 
             <span class="author">{{ book.author }}</span>
+        </div>
 
-            <span class="description">
-                {{ book.description }}
-            </span>
+        <span class="description">
+            {{ book.description }}
+        </span>
     </div>
 </div>

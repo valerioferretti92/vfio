@@ -1,17 +1,20 @@
-const prettier = require("prettier");
+import prettier from "prettier";
 
-module.exports = function (eleventyConfig) {
+export default function (eleventyConfig) {
+  // Passthrough copy
   eleventyConfig.addPassthroughCopy("src/assets/");
   eleventyConfig.addPassthroughCopy("src/css/");
   eleventyConfig.addPassthroughCopy("src/js/");
 
+  // Watch targets
   eleventyConfig.addWatchTarget("src/assets/");
   eleventyConfig.addWatchTarget("src/css/");
   eleventyConfig.addWatchTarget("src/js/");
 
+  // Prettier transform
   eleventyConfig.addTransform("prettier", function (content) {
     if ((this.page.outputPath || "").endsWith(".html")) {
-      let prettified = prettier.format(content, {
+      const prettified = prettier.format(content, {
         bracketSameLine: true,
         printWidth: 512,
         parser: "html",
@@ -19,10 +22,10 @@ module.exports = function (eleventyConfig) {
       });
       return prettified;
     }
-
     return content;
   });
 
+  // Eleventy configuration
   return {
     dir: {
       input: "src",
@@ -35,4 +38,4 @@ module.exports = function (eleventyConfig) {
     htmlTemplateEngine: "njk",
     dataTemplateEngine: "njk",
   };
-};
+}

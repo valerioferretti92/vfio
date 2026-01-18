@@ -19,9 +19,12 @@
 }
 
 .home p {
-  margin: 0 0 1.25rem;
   text-align: justify;
   line-height: 1.5;
+}
+
+.home p:not(:last-child) {
+  margin: 0 0 1.25rem;
 }
 
 .home summary {

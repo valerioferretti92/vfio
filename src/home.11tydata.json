@@ -4,7 +4,7 @@
       "cover": "assets/build_a_large_language_model_from_scratch.png",
       "title": "Build a Large Language Model (From Scratch)",
       "author": "Sebastian Raschka",
-      "link": "https://shorturl.at/RNHuU",
+      "link": "https://a.co/d/bai12Su",
       "description": "Hands-on journey into the inner workings of generative AI, with PyTorch. This book walks you through each stage of LLM development to understand how models work under the hood, their limitations, and how to fine tune them."
     }
   ],
@@ -13,42 +13,42 @@
       "cover": "assets/the_go_programming_language.png",
       "title": "The Go Programming Language",
       "author": "Alan A. A. Donovan, Brian W. Kernighan",
-      "link": "https://shorturl.at/R297a",
+      "link": "https://a.co/d/4x5GPP2",
       "description": "Comprehensive introduction to the Go programming language for programmers. It explains Go’s core features, syntax, and concurrency model with clear examples. Focuses on writing efficient, reliable, and idiomatic Go software."
     },
     {
       "cover": "assets/concurrency_in_go.png",
       "title": "Concurrency in Go",
       "author": "Katherine Cox-Buday",
-      "link": "https://shorturl.at/PotCc",
+      "link": "https://a.co/d/6YopOLk",
       "description": "Deep dive into Go concurrency model. It explains practical tools and patterns for writing safe, efficient, and maintainable concurrent code, helping developers avoid common concurrency mistakes while improving performance and scalability."
     },
     {
       "cover": "assets/springboot_in_action.png",
       "title": "Springboot in Action",
       "author": "Craig Walls",
-      "link": "https://shorturl.at/nk7gd",
+      "link": "https://a.co/d/aLoea0j",
       "description": "Hands-on guide to building modern, production-ready Java applications using Spring Boot, covering configuration management, dependency injection, starter dependencies, and more."
     },
     {
       "cover": "assets/fullstack_react.png",
       "title": "Fullstack React",
       "author": "Anthony Accomazzo, Ari Lerner, Clay Allsoap, David Guttman, Tyler McGinnis, Nate Murray",
-      "link": "https://shorturl.at/iRaqL",
+      "link": "https://a.co/d/goqq96t",
       "description": "Comprehensive guide to building modern web applications with React, covering both frontend and backend integration. It teaches practical techniques for creating scalable, maintainable, and interactive applications."
     },
     {
       "cover": "assets/javascript_definitive_guide.png",
       "title": "Javascript The Definitive Guide",
       "author": "David Flanagan",
-      "link": "https://shorturl.at/O33j6",
+      "link": "https://a.co/d/grqlWL8",
       "description": "Comprehensive reference to the JavaScript language, covering core syntax, semantics, and advanced features in depth. The book also explains how JavaScript interacts with browsers, the DOM, and web APIs."
     },
     {
       "cover": "assets/rediscovering_javascript_es6_7_8.png",
       "title": "Rediscovering Javascript, ECMAScript 6, 7, and 8",
       "author": "Venkat Subramaniam",
-      "link": "https://shorturl.at/nEtQk",
+      "link": "https://a.co/d/6igzY6i",
       "description": "Deep dive into JavaScript’s evolution, focusing on the features introduced in ES6, ES7, and ES8. It presents new syntax, functional programming patterns, and asynchronous programming, helping developers write cleaner, more efficient, and maintainable code."
     }
   ],
@@ -57,7 +57,7 @@
       "cover": "assets/kubernetes_in_action.png",
       "title": "Kubernetes in Action",
       "author": "Marko Luksa",
-      "link": "https://shorturl.at/ppTdI",
+      "link": "https://a.co/d/53zmf6Q",
       "description": "A practical, hands-on introduction to Kubernetes, explaining its core concepts and architecture. It demystifies container orchestration, making it easier to design and operate cloud-native systems with confidence"
     }
   ],
@@ -66,14 +66,14 @@
       "cover": "assets/mongodb_definitive_guide.png",
       "title": "MongoDB the Definitive Guide",
       "author": "Kristina Chodorow",
-      "link": "https://shorturl.at/Ld8DJ",
+      "link": "https://a.co/d/3tFhV8Q",
       "description": "MongoDB under the hood, from document modeling and indexing to replication and sharding enabling scalable, high-performance data models beyond traditional relational databases."
     },
     {
       "cover": "assets/elasticsearch_definitive_guide.png",
       "title": "ElasticSearch the Definitive Guide",
       "author": "Clinton Gromley, Zachary Tong",
-      "link": "https://shorturl.at/kqctT",
+      "link": "https://a.co/d/6XfSvex",
       "description": "Introduction tothe core concepts behind Elasticsearch, including indexing, querying, relevance scoring, and distributed search, to build fast, scalable search and analytics features on large volumes of data."
     }
   ],
@@ -82,7 +82,7 @@
       "cover": "assets/kafka_definitive_guide.png",
       "title": "Kafka the Definitive Guide",
       "author": "Neha Narkhede, Gwen Shapira, Todd Palino",
-      "link": "https://shorturl.at/mmi6K",
+      "link": "https://a.co/d/fvTzWSf",
       "description": "Provides a clear, in-depth look at how Apache Kafka works, covering its core components, data flow, and distributed architecture. A very valuable resource for understanding the fundamentals of event-driven systems and building scalable, fault-tolerant applications."
     }
   ]

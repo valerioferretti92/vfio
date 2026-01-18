@@ -76,6 +76,11 @@
   }
 }
 
+.books a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .book > div {
   display: flex;
   flex-direction: column;
@@ -84,6 +89,11 @@
 
 .book .title {
   font-weight: 500;
+  text-decoration: underline;
+}
+
+.book:hover .title {
+  color: rgb(var(--spicy-paprika));
 }
 
 .book .author {

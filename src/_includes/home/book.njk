@@ -1,4 +1,9 @@
-<div class="book">
+<a
+    href="{{ book.link }}"
+    target="_blank"
+    rel="noopener"
+    class="book">
+
     <img
         src="{{ book.cover }}"
         alt="{{ book.title }}"
@@ -6,15 +11,7 @@
 
     <div>
         <div>
-            <a
-                href="{{ book.link }}"
-                target="_blank"
-                rel="noopener"
-                class="title"
-                style="display: block;">
-                    {{ book.title }}
-                </a>
-
+            <span class="title" style="display: block;"> {{ book.title }}</span>
             <span class="author">{{ book.author }}</span>
         </div>
 
@@ -22,4 +19,4 @@
             {{ book.description }}
         </span>
     </div>
-</div>
+</a>

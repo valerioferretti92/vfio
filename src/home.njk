@@ -6,7 +6,7 @@ permalink: /
 
 {% include "header/header.njk" %}
 <main class="home">
-    <section class="about">
+    <section>
         <header>
             <h4 id="about">
                 About Myself <a href="#about" class="anchor">#</a>
@@ -32,13 +32,22 @@ permalink: /
             trail running and cycling. These activities are
             not just a hobby, they are a challenge and an
             occasion to push my limits, which is something I
-            really enjoy. My motto?
-            <span style="font-style: italic; font-weight: bold;">
-                Mens sana in corpore sano.
-            </span>
+            really enjoy.
         </p>
     </section>
-    <section class="readings">
+    <section>
+        <header>
+            <h4 id="articles">
+                Recent Articles <a href="#articles" class="anchor">#</a>
+            </h4>
+        </header>
+        <div class="articles">
+            {% for article in articles %}
+                {% include "article.njk" %}
+            {% endfor %}
+        </div>
+    </section>
+    <section>
         <header>
             <h4 id="readings">
                 Readings <a href="#readings" class="anchor">#</a>

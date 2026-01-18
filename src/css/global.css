@@ -17,7 +17,8 @@
 }
 
 body {
-  font-family: "system-ui", "sans-serif";
+  /*font-family: "system-ui", "sans-serif";*/
+  font-family: "Roboto", sans-serif;
   color: rgb(var(--carbon-black));
   background-color: rgb(var(--floral-white));
 }

@@ -39,20 +39,32 @@
   color: rgb(var(--spicy-paprika));
 }
 
-.books {
+.books,
+.articles {
   display: flex;
   flex-direction: column;
+}
+
+.books {
   gap: 1rem;
 }
 
-.book {
+.articles {
+  gap: 2rem;
+}
+
+.book,
+.article {
   display: flex;
   gap: 1rem;
+  text-align: left;
+}
+
+.book {
   padding: 1.25rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
   background: rgb(var(--dust-grey));
-  text-align: left;
 }
 
 @media screen and (max-width: 768px) and (orientation: portrait) {
@@ -76,24 +88,34 @@
   }
 }
 
-.books a {
+.books a,
+.articles a {
   text-decoration: none;
   color: inherit;
 }
 
-.book > div {
+.book div,
+.articles div {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.book .title {
-  font-weight: 500;
-  text-decoration: underline;
+.articles div {
+  text-align: left;
 }
 
-.book:hover .title {
+.book .title,
+.article .title {
+  font-weight: 500;
+}
+
+.book:hover .title,
+.article:hover .title {
   color: rgb(var(--spicy-paprika));
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .book .author {
@@ -107,6 +129,11 @@
   font-style: italic;
 }
 
-.book:hover {
+.article .datetime {
+  font-weight: 300;
+}
+
+.book:hover,
+.article:hover {
   transform: translateY(-2px);
 }

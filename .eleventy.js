@@ -1,4 +1,5 @@
 import prettier from "prettier";
+import { DateTime } from "luxon";
 
 export default function (eleventyConfig) {
   // Passthrough copy
@@ -23,6 +24,17 @@ export default function (eleventyConfig) {
       return prettified;
     }
     return content;
+  });
+
+  eleventyConfig.addFilter("date", (date, format = "dd LLL yyyy") => {
+    console.log(date);
+    return DateTime.fromISO(date).toFormat(format);
+  });
+
+  eleventyConfig.addFilter("truncate", (content, length = 200) => {
+    if (!content) return "";
+
+    return content.length > length ? content.slice(0, length) + "…" : content;
   });
 
   // Eleventy configuration

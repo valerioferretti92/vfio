@@ -1,0 +1,18 @@
+<a
+    href="{{ article.link }}"
+    rel="noopener"
+    class="article">
+
+    <div>
+        <time
+            datetime="{{ article.date }}"
+            class="datetime">
+
+            {{ article.date | date("MMMM dd, yyyy") }}
+        </time>
+        <h3 class="title"> {{ article.title }}</h3>
+        <span class="content" style="display: block;">
+            {{ article.content | truncate(175) }}
+        </span>
+    </div>
+</a>

@@ -27,7 +27,10 @@ export default function (eleventyConfig) {
   });
 
   eleventyConfig.addFilter("date", (date, format = "dd LLL yyyy") => {
-    console.log(date);
+    if (date instanceof Date) {
+      return DateTime.fromJSDate(date).toFormat(format);
+    }
+
     return DateTime.fromISO(date).toFormat(format);
   });
 

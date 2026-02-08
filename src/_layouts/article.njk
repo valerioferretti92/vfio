@@ -1,0 +1,18 @@
+{% extends "../_layouts/base.njk" %}
+
+{% block styles %}
+<link rel="stylesheet" href="/css/header.css" />
+<link rel="stylesheet" href="/css/article.css" />
+{% endblock %}
+
+{% block content %}
+{% include "header/header.njk" %}
+<article class="article">
+    <header>
+        <span class="date" style="display: block;">{{ date | date("MMMM dd, yyyy") }}</span>
+        <h2 class="title" style="display: block;"> {{ title }}</h2>
+    </header>
+
+    {{ content | safe }}
+</article>
+{% endblock %}

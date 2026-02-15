@@ -2,6 +2,8 @@
   --white: 255, 255, 255; /* #ffffff */
   --floral-white: 255, 252, 242; /* #fffcf2 */
   --dust-grey: 204, 197, 185; /* #ccc5b9 */
+  --dust-grey-light: 235, 232, 226; /* #ebe8e2 */
+  --dust-grey-dark: 222, 217, 208; /* #ded9d0 */
   --charcoal-brown: 64, 61, 57; /* #403d39 */
   --carbon-black: 37, 36, 34; /* #252422 */
   --spicy-paprika: 235, 94, 40; /* #eb5e28 */
@@ -21,6 +23,10 @@ body {
   font-family: "Noto sans", sans-serif;
   color: rgb(var(--carbon-black));
   background-color: rgb(var(--white));
+}
+
+p {
+  line-height: 1.5;
 }
 
 a {

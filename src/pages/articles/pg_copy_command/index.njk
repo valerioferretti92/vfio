@@ -1,13 +1,358 @@
 ---
 layout: article.njk
-title: The PG Copy Command
+title: The Postgres COPY command to the rescue
 permalink: /articles/pg_copy_command/index.html
 date: 2026-01-18T12:24:30.086Z
 ---
 
 <div class="content">
-    <p>
-        Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>.
-        Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    </p>
+    <section>
+        <p>
+            Recently, one of our data flows that was heavily relying on Postgres,
+            started to fail, with the main reason being Postgres going out of
+            memory. We decided to scale up our already expensive RDS instance, but
+            we quickly realized that, on top being of being expensive, that still
+            wasn't enough. It all changed when one of my colleagues suggested to
+            update our flow to use the Postgres <span class="keyword">COPY</span>
+            command rather than <span class="keyword">INSERT</span> statements.
+            The performance improvement was spectacular. In fact, so spectacular,
+            that I decided I had to know more about it. This article tells my
+            experience with the Postgres <span class="keyword">COPY</span>
+            command and summarizes what I've come to learn about it.
+        </p>
+    </section>
+    <section>
+        <h3>The problem at hand</h3>
+        <p>
+            On a regular basis, our backend needs to work out the delta in a
+            dataset between two points in time. More specifically, for each
+            dataset <span class="datapoint">X</span>, on a regular basis, the
+            backend needs to figure out the following:
+        </p>
+        <ul>
+            <li>Which rows left the dataset <span class="datapoint">X</span></li>
+            <li>Which rows joined the dataset <span class="datapoint">X</span></li>
+            <li>Which rows belonging to the dataset <span class="datapoint">X</span> were updated</li>
+        </ul>
+        <p>
+            For example, suppose that at point in time
+            <span class="datapoint">t1</span> the dataset
+            <span class="datapoint">X</span> contains the following rows:
+        </p>
+        <div class="xscroller">
+            <table class="styledtable">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Surname</th>
+                  <th>Age</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>John</td>
+                  <td>Ruth</td>
+                  <td>25</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Daisy</td>
+                  <td>Domergue</td>
+                  <td>30</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Chris</td>
+                  <td>Mannix</td>
+                  <td>35</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Oswaldo</td>
+                  <td>Mobrey</td>
+                  <td>35</td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>Joe</td>
+                  <td>Gage</td>
+                  <td>35</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+        <p>
+            Instead, at point in time <span class="datapoint">t2</span> the
+            dataset <span class="datapoint">X</span> contains the following rows:
+        </p>
+        <div class="xscroller">
+            <table class="styledtable">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Surname</th>
+                  <th>Age</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>John</td>
+                  <td>Ruth</td>
+                  <td>25</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Chris</td>
+                  <td>Mannix</td>
+                  <td>35</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Oswaldo</td>
+                  <td>Mobrey</td>
+                  <td>40</td>
+                </tr>
+                <tr>
+                  <td>6</td>
+                  <td>Marquis</td>
+                  <td>Warren</td>
+                  <td>37</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+        <p>
+            Our delta algorithm would then need to compute the set of insertions,
+            the set of deletions and the set updates to the dataset
+            <span class="datapoint">X</span>, between the points in time
+            <span class="datapoint">t1</span> and <span class="datapoint">t2</span>,
+            which are as follows:
+        </p>
+        <div class="xscroller">
+            <table class="styledtable" id="deltatable">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Surname</th>
+                        <th>Age</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight: 600;">DELETED</td>
+                        <td>2</td>
+                        <td>Daisy</td>
+                        <td>Domergue</td>
+                        <td>30</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">UPDATED</td>
+                        <td>4</td>
+                        <td>Oswaldo</td>
+                        <td>Mobrey</td>
+                        <td>40</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">DELETED</td>
+                        <td>5</td>
+                        <td>Joe</td>
+                        <td>Gage</td>
+                        <td>35</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">INSERTED</td>
+                        <td>6</td>
+                        <td>Marquis</td>
+                        <td>Warren</td>
+                        <td>37</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section>
+        <h3>The implementation</h3>
+        <p>
+            To be able to work out the dataset delta as displayed above, the
+            backend would keep a separate table, let's call it
+            <span class="datapoint">dataset_versions</span>, which would contain
+            the entire dataset <span class="datapoint">X</span> as it used to be
+            during the last run of our algorithm, at point in time
+            <span class="datapoint">t1</span>. At point in time,
+            <span class="datapoint">t2</span>, to be able to compute the dataset
+            delta, the backend would perform the following tasks:
+        </p>
+        <ul>
+            <li>
+                Store in <span class="datapoint">dataset_versions</span> the
+                entire dataset <span class="datapoint">X</span> as it is at
+                point in time <span class="datapoint">t2</span>.
+            </li>
+            <li>
+                Work out insertions, deletions and updates by executing SQL
+                queries comparing version <span class="datapoint">t1</span> with
+                version <span class="datapoint">t2</span>, both stored in the
+                table <span class="datapoint">dataset_versions</span>.
+            </li>
+            <li>
+                Clean up version <span class="datapoint">t1</span> from the table
+                <span class="datapoint">dataset_versions</span>. Version
+                <span class="datapoint">t2</span> is kept in the table and used
+                as the new base version for future delta computations.
+            </li>
+        </ul>
+        <p>
+            In other words, the heavy lifting was delegated to the Postgres
+            instance managing the table
+            <span class="datapoint">dataset_versions</span> and running the
+            delta queries.
+        </p>
+        <p>
+            The following listings show the content of the table
+            <span class="datapoint">dataset_versions</span> during the execution
+            of the delta algorithm:
+        </p>
+        <div class="xscroller">
+            <table class="styledtable">
+                <thead>
+                    <tr>
+                        <th>unique_id</th>
+                        <th>user_id</th>
+                        <th>name</th>
+                        <th>surname</th>
+                        <th>age</th>
+                        <th>dataset</th>
+                        <th>version</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>9tzYeg</td>
+                        <td>1</td>
+                        <td>John</td>
+                        <td>Ruth</td>
+                        <td>25</td>
+                        <td style="font-weight: 600;">X</td>
+                        <td style="font-weight: 600;">t1</td>
+                    </tr>
+                    <tr>
+                        <td>SJmF5Q</td>
+                        <td>2</td>
+                        <td>Daisy</td>
+                        <td>Domergue</td>
+                        <td>30</td>
+                        <td style="font-weight: 600;">X</td>
+                        <td style="font-weight: 600;">t1</td>
+                    </tr>
+                    <tr>
+                        <td>zeknNw</td>
+                        <td>3</td>
+                        <td>Chris</td>
+                        <td>Mannix</td>
+                        <td>35</td>
+                        <td style="font-weight: 600;">X</td>
+                        <td style="font-weight: 600;">t1</td>
+                    </tr>
+                    <tr>
+                        <td>5IJVXw</td>
+                        <td>4</td>
+                        <td>Oswaldo</td>
+                        <td>Mobrey</td>
+                        <td>35</td>
+                        <td style="font-weight: 600;">X</td>
+                        <td style="font-weight: 600;">t1</td>
+                    </tr>
+                    <tr>
+                        <td>wZsTLw</td>
+                        <td>5</td>
+                        <td>Joe</td>
+                        <td>Gage</td>
+                        <td>35</td>
+                        <td style="font-weight: 600;">X</td>
+                        <td style="font-weight: 600;">t1</td>
+                    </tr>
+                    <tr>
+                        <td>wrEjow</td>
+                        <td>8</td>
+                        <td>Valerio</td>
+                        <td>Ferretti</td>
+                        <td>33</td>
+                        <td>Y</td>
+                        <td>s1</td>
+                    </tr>
+                    <tr>
+                        <td>4bPS2A</td>
+                        <td>8</td>
+                        <td>Mercedes</td>
+                        <td>Del Fresno</td>
+                        <td>33</td>
+                        <td>Y</td>
+                        <td>s1</td>
+                    </tr>
+                    <tr>
+                        <td>qT909g</td>
+                        <td>1</td>
+                        <td>John</td>
+                        <td>Ruth</td>
+                        <td>25</td>
+                        <td style="font-weight: 600;">X</td>
+                        <td style="font-weight: 600;">t2</td>
+                    </tr>
+                    <tr>
+                        <td>PpXWrQ</td>
+                        <td>3</td>
+                        <td>Chris</td>
+                        <td>Mannix</td>
+                        <td>35</td>
+                        <td style="font-weight: 600;">X</td>
+                        <td style="font-weight: 600;">t2</td>
+                    </tr>
+                    <tr>
+                        <td>4LAShw</td>
+                        <td>4</td>
+                        <td>Oswaldo</td>
+                        <td>Mobrey</td>
+                        <td>40</td>
+                        <td style="font-weight: 600;">X</td>
+                        <td style="font-weight: 600;">t2</td>
+                    </tr>
+                    <tr>
+                        <td>DJ542A</td>
+                        <td>6</td>
+                        <td>Marquis</td>
+                        <td>Warren</td>
+                        <td>37</td>
+                        <td style="font-weight: 600;">X</td>
+                        <td style="font-weight: 600;">t2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>
+            The following listing displays the query to run, to workout the
+            insertions set of dataset <span class="datapoint">X</span> at time
+            <span class="datapoint">t2</span>...
+        </p>
+        <pre><code class="language-sql">{% include "articles/pg_copy_command/insertions.sql" %}</code></pre>
+        <p>
+            the updates set...
+        </p>
+        <pre><code class="language-sql">{% include "articles/pg_copy_command/updates.sql" %}</code></pre>
+        <p>
+            and finally, the deletions set.
+        </p>
+        <pre><code class="language-sql">{% include "articles/pg_copy_command/deletions.sql" %}</code></pre>
+        <p>
+            These queries combined accomplish the task of computing the delta
+            between <span class="datapoint">t2</span> and <span class="datapoint">t1</span>
+            for dataset <span class="datapoint">X</span>, and produce the results
+            displayed in the <a href="#deltatable">delta table</a> above.
+        </p>
+    </section>
 </div>

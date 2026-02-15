@@ -11,8 +11,8 @@
             {{ article.date | date("MMMM dd, yyyy") }}
         </time>
         <h3 class="title"> {{ article.title }}</h3>
-        <span class="content" style="display: block;">
+        <p class="content" style="display: block;">
             {{ article.content | truncate(175) }}
-        </span>
+        </p>
     </div>
 </a>

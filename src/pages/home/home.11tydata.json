@@ -3,13 +3,13 @@
     {
       "link": "/articles/pg_copy_command",
       "date": "2026-01-18T12:24:30.086Z",
-      "title": "The Postgres COPY Command",
-      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit."
+      "title": "The Postgres COPY command to the rescue",
+      "content": "Recently, one of our data flows that was heavily relying on Postgres, started to fail, with the main reason being Postgres going out of memory. We decided to scale up our already expensive RDS instance, but we quickly realized that, on top being of being expensive, that still wasn't enough."
     },
     {
       "link": "/articles/snowflake_cdc_pipelines",
       "date": "2026-01-18T12:24:30.086",
-      "title": "Snopwflake CDC Pipelines",
+      "title": "Snowflake CDC Pipelines",
       "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit."
     }
   ],
@@ -88,7 +88,7 @@
       "title": "ElasticSearch the Definitive Guide",
       "author": "Clinton Gromley, Zachary Tong",
       "link": "https://a.co/d/6XfSvex",
-      "description": "Introduction tothe core concepts behind Elasticsearch, including indexing, querying, relevance scoring, and distributed search, to build fast, scalable search and analytics features on large volumes of data."
+      "description": "Introduction to the core concepts behind Elasticsearch, including indexing, querying, relevance scoring, and distributed search, to build fast, scalable search and analytics features on large volumes of data."
     }
   ],
   "eventDrivenProgrammingReadings": [

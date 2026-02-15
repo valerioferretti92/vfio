@@ -18,3 +18,50 @@
 .article .date {
   font-weight: 300;
 }
+
+.article .content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  line-height: 1.5;
+}
+
+.article .content section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.article .content ul {
+  margin-left: 2rem;
+  margin-right: 1rem;
+}
+
+.article .content .keyword {
+  margin: 0;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-size: 85%;
+  background-color: rgb(var(--dust-grey));
+}
+
+.article .content .datapoint {
+  font-weight: 600;
+  font-style: italic;
+}
+
+.article .content pre {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  height: auto;
+}
+
+.article .content code {
+  min-width: 75%;
+  background-color: rgb(var(--dust-grey-light));
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}

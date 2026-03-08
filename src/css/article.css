@@ -32,7 +32,8 @@
   gap: 1rem;
 }
 
-.article .content ul {
+.article .content ul,
+.article .content ol {
   margin-left: 2rem;
   margin-right: 1rem;
 }
@@ -47,6 +48,10 @@
 
 .article .content .datapoint {
   font-weight: 600;
+  font-style: italic;
+}
+
+.article .content .argument {
   font-style: italic;
 }
 

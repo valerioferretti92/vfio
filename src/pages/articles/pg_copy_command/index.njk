@@ -11,24 +11,29 @@ date: 2026-01-18T12:24:30.086Z
             Recently, one of our data flows that was heavily relying on Postgres,
             started to fail, with the main reason being Postgres going out of
             memory. We decided to scale up our already expensive RDS instance, but
-            we quickly realized that, on top being of being expensive, that still
+            we quickly realized that, on top being of expensive, that still
             wasn't enough. It all changed when one of my colleagues suggested to
-            update our flow to use the Postgres <span class="keyword">COPY</span>
-            command rather than <span class="keyword">INSERT</span> statements.
-            The performance improvement was spectacular. In fact, so spectacular,
-            that I decided I had to know more about it. This article tells my
-            experience with the Postgres <span class="keyword">COPY</span>
-            command and summarizes what I've come to learn about it.
+            update our flow to use the Postgres COPY command rather than
+            <span class="keyword">INSERT</span> statements. The performance
+            improvement was spectacular. In fact, so spectacular, that I decided
+            I had to know more about it. This article tells my experience with
+            the Postgres COPY command and summarizes what I've come to learn
+            about it.
+        </p>
+        <p>
+            Postgres offers a <span class="keyword">COPY FROM</span> and
+            <span class="keyword">COPY TO</span> commands. In this article, when
+            I refer to the COPY command, I am actually talking about both.
         </p>
     </section>
     <section>
-        <h3>What <span class="keyword">COPY</span> is all about</h3>
+        <h3>What COPY is all about</h3>
         <p>
-            <span class="keyword">COPY</span> moves data between PostgreSQL
-            tables and standard file-system files. <span class="keyword">COPY TO</span>
-            copies the contents of a table to a file, while
-            <span class="keyword">COPY FROM</span> copies data from a file to a
-            table, appending the data to whatever is in the table already.
+            COPY moves data between Postgres tables and standard file-system
+            files. <span class="keyword">COPY TO</span> copies the contents of a
+            table to a file, while <span class="keyword">COPY FROM</span> copies
+            data from a file to a table, appending the data to whatever is in the
+            table already.
         </p>
         <p>
             Imagine having a <span class="datapoint">users</span> table created
@@ -61,20 +66,20 @@ date: 2026-01-18T12:24:30.086Z
         </p>
         <p>
             This article deals with the Postgres implementation of the
-            <span class="keyword">COPY</span> commands, when to use them and why
-            they perfom as well as they do.
+            COPY commands, when to use them and why they perfom as well as they
+            do.
         </p>
     </section>
     <section>
         <h3>The interface to Postgres</h3>
         <p>
-            Before jumping into the <span class="keyword">COPY</span> internals,
-            let me spend a couple of words on
+            Before jumping into the COPY internals, let me spend a couple of
+            words on
             <span class="datapoint">
                 <a href="https://www.postgresql.org/docs/current/libpq.html">libpq</a>
             </span>,
             the gateway to Postgres.
-            <span class="datapoint">libpq</span> is the the Postgres native C client
+            <span class="datapoint">libpq</span> is the Postgres native C client
             library. It is the fundamental API used to talk to a Postgres server
             from client programs. It implements the Postgres frontend/backend
             protocol and provides all the core functions needed to:
@@ -91,21 +96,151 @@ date: 2026-01-18T12:24:30.086Z
             </li>
         </ul>
         <p>
-            In other words, libpq is the official C application programmer’s
-            interface to Postgres. Programs written in C can call functions in
-            libpq to interact with the database backend directly. It’s also the
-            underlying implementation for many higher-level language interfaces,
-            drivers and bindings. That means that even when using another
-            language, at the lowest level the client library talking to the
-            database server is often <span class="datapoint">libpq</span>.
+            In other words, <span class="datapoint">libpq</span> is the official
+            C application programmer’s interface to Postgres. Programs written
+            in C can call functions in <span class="datapoint">libpq</span> to
+            interact with the database backend directly. It’s also the underlying
+            implementation for many higher-level language interfaces, drivers
+            and bindings. That means that even when using another language, at
+            the lowest level the client library talking to the database server
+            is often <span class="datapoint">libpq</span>.
         </p>
         <p>
-            To truly understand the Postgres <span class="keyword">COPY</span>
-            command, it is necessary to understand how
-            <span class="datapoint">libpq</span> and the Postgres server
-            communicate over the frontend/backend protocol, and particularly how
-            bulk data is streamed between a client using
+            To truly understand the Postgres COPY command, it is necessary to
+            understand how <span class="datapoint">libpq</span> and the Postgres
+            server communicate over the frontend/backend protocol, and
+            particularly how bulk data is streamed between a client using
             <span class="datapoint">libpq</span> and the Postgres backend.
+        </p>
+    </section>
+    <section>
+        <h3>The <span class="keyword">COPY FROM</span> flow</h3>
+        <h4>In <span class="datapoint">libpq</span> clients...</h4>
+        <p>
+            Most of the client side logic related to
+            <span class="keyword">COPY FROM</span> can be found in the file
+            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c">fe-exec.c</a>,
+            which is where I found the information reported in the paragraphs below.
+        </p>
+        <p>
+            The process begins when the application sends a
+            <span class="keyword">COPY FROM</span> command using a normal query
+            function such as
+            <a href="https://www.postgresql.org/docs/current/libpq-exec.html#id-1.7.3.11.3"><span class="datapoint">PQexec</span></a>.
+            If the command is valid, Postgres responds with a
+            <span class="datapoint">PGresult</span> whose status is
+            <span class="datapoint">PGRES_COPY_IN</span>. This status indicates
+            that the server is ready to receive data from the client. At this
+            point the connection switches into a special COPY state. While the
+            connection is in this state, the client cannot send other SQL
+            commands. The only valid operations are the COPY-related functions
+            provided by <span class="datapoint">libpq</span>.
+        </p>
+        <p>
+            Once the server has entered the COPY mode, the client begins streaming
+            the data that should be inserted into the table, by repeatedly calling
+            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2712"><span class="datapoint">PQputCopyData</span></a>,
+            which transmits a buffered chunk of COPY data through the server socket.
+        </p>
+        <p>
+            After all rows have been transmitted, the client must explicitly
+            signal that the COPY stream has finished. This is done by calling
+            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2765"><span class="datapoint">PQputCopyEnd</span></a>.
+            When called with a NULL error message it indicates successful
+            completion of the data stream. Alternatively, the client can abort
+            the operation by providing an error message, which causes Postgres
+            to treat the COPY as failed.
+        </p>
+        <h4>...and in the Postgres backend</h4>
+        <p>
+           A detailed account of what happens server side during the
+           <span class="keyword">COPY FROM</span> flow is out of the scope of
+           this article. Most of the logic can be found in
+           <a href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copy.c">copy.c</a> and
+           <a href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copyfrom.c">copyfrom.c</a>.
+           The following paragraphs provide a high level overview of the server
+           side flow.
+        </p>
+        <p>
+            The <span class="keyword">COPY FROM</span> operation is implemented
+            by the function <a href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copyfrom.c#L779">CopyFrom</a>
+            and it roughly consists in the following steps:
+        </p>
+        <ol>
+            <li>
+                <span style="font-weight: 600;">Parsing and planning</span>:
+                The statement is parsed an turned into a
+                <span class="datapoint">CopyStmt</span> struct, holding metadata
+                about the operation. The target relation is opened and locked.
+            </li>
+            <li>
+                <span style="font-weight: 600;">Read raw input data</span>:
+                Data is read into an in-memory buffer from the source which can
+                be a file, stdin, or a network connection.
+            </li>
+            <li>
+                <span style="font-weight: 600;">Data parsing</span>:
+                The content of the buffer is split into rows and fields, and each
+                field is parsed into a Postgres type to form tuples. This is
+                where defaults are applied to missing columns.
+            </li>
+            <li>
+                <span style="font-weight: 600;">Insert into target relation</span>:
+                Tuples are inserted into the target relation.
+            </li>
+            <li>
+                <span style="font-weight: 600;">Indexes, constraints and triggers</span>:
+                Constraints are checked, indexes udpated and triggers fired if
+                necessary.
+            </li>
+            <li>
+                <span style="font-weight: 600;">Flushing buffered inserts</span>:
+                Crucially, inserted tuples are flushed to disk before completing
+                the command execution.
+            </li>
+            <li>
+                <span style="font-weight: 600;">Return command completion</span>:
+                Postgres returns a <span class="datapoint">CommandComplete</span>
+                message to the client containing metdata about the operation,
+                such as the number of rows inserted.
+            </li>
+        </ol>
+        <p>
+            Basically, the <span class="keyword">COPY FROM</span> streamlines
+            the insertion of data keeping the overhead as low as possible.
+        </p>
+    </section>
+    <section>
+        <h3>The <span class="keyword">COPY TO</span> flow</h3>
+        <p>
+            Of course, the <span class="keyword">COPY TO</span> command is
+            symmetric to <span class="keyword">COPY FROM</span>, with data
+            flowing in the opposite direction. The source code that powers this
+            flow can be found in the file
+            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c">fe-exec.c</a>,
+            for client-side logic,
+            <a href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copy.c">copy.c</a> and
+            <a href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copyto.c">copyto.c</a>
+            for server-side logic.
+        </p>
+        <p>
+            After issuing the <span class="keyword">COPY TO</span> command with
+            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2278"><span class="datapoint">PQexec</span></a>,
+            the client receives a result with status
+            <span class="datapoint">PGRES_COPY_OUT</span>. Instead of sending
+            data, the client repeatedly calls
+            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2832"><span class="datapoint">PQgetCopyData</span></a>
+            to read chunks of COPY output generated by the server. The server
+            sends data until the COPY stream finishes, after which the client
+            retrieves the final <span class="datapoint">PGresult</span> with
+            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2078"><span class="datapoint">PQgetResult</span></a>.
+        </p>
+        <p>
+            In a nutshell, <span class="keyword">COPY TO</span> server-side starts
+            by querying the source relation and reading tuples. Each tuple is
+            then converted into the selected output format, data is serialised
+            into COPY protocol messages, and those messages are streamed back to
+            the client.
         </p>
     </section>
 </div>

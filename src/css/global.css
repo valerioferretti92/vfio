@@ -1,4 +1,5 @@
 :root {
+  --white: 255, 255, 255; /* #ffffff */
   --floral-white: 255, 252, 242; /* #fffcf2 */
   --dust-grey: 204, 197, 185; /* #ccc5b9 */
   --charcoal-brown: 64, 61, 57; /* #403d39 */
@@ -19,7 +20,7 @@
 body {
   font-family: "Noto sans", sans-serif;
   color: rgb(var(--carbon-black));
-  background-color: rgb(var(--floral-white));
+  background-color: rgb(var(--white));
 }
 
 a {

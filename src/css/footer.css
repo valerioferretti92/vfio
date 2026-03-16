@@ -1,9 +1,9 @@
 .footer {
   display: flex;
-  justify-content: space-between; /* Pushes content to opposite sides */
+  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* Ensures it looks good on mobile */
-  max-width: 1200px; /* Adjust based on your page width */
+  flex-wrap: wrap;
+  max-width: 1200px;
   padding: 1rem;
   margin: 0 auto;
   color: rgb(var(--charcoal-brown));
@@ -13,10 +13,10 @@
 
 .footer .github {
   display: inline-flex;
-  align-items: center; /* This is the magic for vertical centering */
-  text-decoration: none; /* Optional: cleaner look with icons */
-  gap: 4px; /* Consistent spacing between text and SVG */
-  vertical-align: middle; /* Ensures the whole link sits right on the text line */
+  align-items: center;
+  text-decoration: none;
+  gap: 4px;
+  vertical-align: middle;
 }
 
 .footer .github svg {
@@ -32,7 +32,6 @@
   text-decoration-color: rgb(var(--github));
 }
 
-/* Small adjustment for mobile */
 @media (max-width: 600px) {
   .footer {
     flex-direction: column;

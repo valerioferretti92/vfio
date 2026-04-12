@@ -185,7 +185,7 @@ show_diagrams: true
             The following sequence diagram visualises what explained above about
             the <span class="keyword">COPY FROM</span> command.
         </p>
-        <pre class="mermaid">{% include "articles/pg_copy_command/copy_from.mmd" %}</pre>
+        <pre class="mermaid">{% filter escape %}{% include "articles/pg_copy_command/copy_from.mmd" %}{% endfilter %}</pre>
         <h4>...and in the Postgres backend</h4>
         <p>
            A detailed account of what happens server side during the
@@ -327,7 +327,7 @@ show_diagrams: true
             The following sequence diagram visualises what explained above about
             the <span class="keyword">COPY TO</span> command.
         </p>
-        <pre class="mermaid">{% include "articles/pg_copy_command/copy_to.mmd" %}</pre>
+        <pre class="mermaid">{% filter escape %}{% include "articles/pg_copy_command/copy_to.mmd" %}{% endfilter %}</pre>
     </section>
     <section>
         <h3>When to use <span class="keyword">COPY</span></h3>

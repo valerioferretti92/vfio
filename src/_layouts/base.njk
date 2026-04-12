@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="/css/footer.css" />
 
         {% if show_code %}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
         {% endif %}
         {% endblock %}
     </head>
@@ -23,17 +23,17 @@
         {% include "footer/footer.njk" %}
 
         {% block js %}
-          {% if show_code %}
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-            <script>hljs.highlightAll();</script>
-          {% endif %}
+        {% if show_code %}
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+          <script>hljs.highlightAll();</script>
+        {% endif %}
 
-          {% if show_diagrams %}
-            <script type="module">
-              import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-              mermaid.initialize({ startOnLoad: true });
-            </script>
-          {% endif %}
+        {% if show_diagrams %}
+          <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({ startOnLoad: true });
+          </script>
+        {% endif %}
         {% endblock %}
     </body>
 </html>

@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    participant App as Application
+    participant libpq as libpq (fe-exec.c)
+    participant PG as Postgres (copyfrom.c)
+
+    Note over App, PG: Initial Command Phase
+    App->>libpq: PQexec("COPY table FROM STDIN")
+    libpq->>PG: Query(COPY FROM...)
+    PG->>PG: Parse & Plan (CopyStmt)
+    PG-->>libpq: PGRES_COPY_IN (Ready to receive)
+    libpq-->>App: Return PGresult
+
+    Note over App, PG: Streaming Phase (COPY State)
+    loop until all data sent
+        App->>libpq: PQputCopyData(buffer)
+        libpq->>PG: CopyData chunk
+        PG->>PG: Data parsing & Tuple formation
+        PG->>PG: Insert into target relation
+    end
+
+    Note over App, PG: Termination Phase
+    App->>libpq: PQputCopyEnd(NULL)
+    libpq->>PG: CopyDone
+    PG->>PG: Flush buffers & Update indexes
+    PG-->>libpq: CommandComplete (rows inserted)
+    libpq-->>App: Final Result

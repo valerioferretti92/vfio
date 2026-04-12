@@ -54,7 +54,10 @@ date: 2026-01-18T12:24:30.086Z
         <p>
             Postgres offers a rich syntax to handle different file formats,
             file headers, field delimiters, encoding, and more. Checkout the
-            <a href="https://www.postgresql.org/docs/current/sql-copy.html">
+            <a
+                href="https://www.Postgres.org/docs/current/sql-copy.html"
+                target="_blank"
+                rel="noopener noreferrer">
                 official documentation
             </a>
             for more details. Many other database systems with SQL-esque dialects
@@ -76,7 +79,13 @@ date: 2026-01-18T12:24:30.086Z
             Before jumping into the COPY internals, let me spend a couple of
             words on
             <span class="datapoint">
-                <a href="https://www.postgresql.org/docs/current/libpq.html">libpq</a>
+                <a
+                    href="https://www.Postgres.org/docs/current/libpq.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    libpq
+                </a>
             </span>,
             the gateway to Postgres.
             <span class="datapoint">libpq</span> is the Postgres native C client
@@ -119,51 +128,91 @@ date: 2026-01-18T12:24:30.086Z
         <p>
             Most of the client side logic related to
             <span class="keyword">COPY FROM</span> can be found in the file
-            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c">fe-exec.c</a>,
+            <a
+                href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c"
+                target="_blank"
+                rel="noopener noreferrer">
+                fe-exec.c
+            </a>,
             which is where I found the information reported in the paragraphs below.
         </p>
         <p>
             The process begins when the application sends a
             <span class="keyword">COPY FROM</span> command using a normal query
             function such as
-            <a href="https://www.postgresql.org/docs/current/libpq-exec.html#id-1.7.3.11.3"><span class="datapoint">PQexec</span></a>.
+            <a href="https://www.Postgres.org/docs/current/libpq-exec.html#id-1.7.3.11.3"
+                target="_blank"
+                rel="noopener noreferrer">
+                <span class="datapoint">PQexec</span>
+            </a>.
             If the command is valid, Postgres responds with a
             <span class="datapoint">PGresult</span> whose status is
             <span class="datapoint">PGRES_COPY_IN</span>. This status indicates
             that the server is ready to receive data from the client. At this
             point the connection switches into a special COPY state. While the
             connection is in this state, the client cannot send other SQL
-            commands. The only valid operations are the COPY-related functions
-            provided by <span class="datapoint">libpq</span>.
+            commands over the same connection. The only valid operations are the
+            COPY-related functions provided by <span class="datapoint">libpq</span>.
         </p>
         <p>
             Once the server has entered the COPY mode, the client begins streaming
             the data that should be inserted into the table, by repeatedly calling
-            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2712"><span class="datapoint">PQputCopyData</span></a>,
+            <a
+                href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2712"
+                target="_blank"
+                rel="noopener noreferrer">
+                <span class="datapoint">PQputCopyData</span>
+            </a>,
             which transmits a buffered chunk of COPY data through the server socket.
         </p>
         <p>
             After all rows have been transmitted, the client must explicitly
             signal that the COPY stream has finished. This is done by calling
-            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2765"><span class="datapoint">PQputCopyEnd</span></a>.
+            <a
+                href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2765"
+                target="_blank"
+                rel="noopener noreferrer">
+                <span class="datapoint">PQputCopyEnd</span>
+            </a>.
             When called with a NULL error message it indicates successful
             completion of the data stream. Alternatively, the client can abort
             the operation by providing an error message, which causes Postgres
             to treat the COPY as failed.
         </p>
+        <p>
+            The following sequence diagram visualises what explained above about
+            the <span class="keyword">COPY FROM</span> command.
+        </p>
+        <pre class="mermaid">{% include "articles/pg_copy_command/copy_from.mmd" %}</pre>
         <h4>...and in the Postgres backend</h4>
         <p>
            A detailed account of what happens server side during the
            <span class="keyword">COPY FROM</span> flow is out of the scope of
            this article. Most of the logic can be found in
-           <a href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copy.c">copy.c</a> and
-           <a href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copyfrom.c">copyfrom.c</a>.
+           <a
+               href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copy.c"
+               target="_blank"
+               rel="noopener noreferrer">
+               copy.c
+           </a> and
+           <a
+               href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copyfrom.c"
+               target="_blank"
+               rel="noopener noreferrer">
+               copyfrom.c
+           </a>.
            The following paragraphs provide a high level overview of the server
            side flow.
         </p>
         <p>
             The <span class="keyword">COPY FROM</span> operation is implemented
-            by the function <a href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copyfrom.c#L779">CopyFrom</a>
+            by the function
+            <a
+                href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copyfrom.c#L779"
+                target="_blank"
+                rel="noopener noreferrer">
+                CopyFrom
+            </a>
             and it roughly consists in the following steps:
         </p>
         <ol>
@@ -176,7 +225,7 @@ date: 2026-01-18T12:24:30.086Z
             <li>
                 <span style="font-weight: 600;">Read raw input data</span>:
                 Data is read into an in-memory buffer from the source which can
-                be a file, stdin, or a network connection.
+                be a file, standard input, or a network connection.
             </li>
             <li>
                 <span style="font-weight: 600;">Data parsing</span>:
@@ -217,23 +266,53 @@ date: 2026-01-18T12:24:30.086Z
             symmetric to <span class="keyword">COPY FROM</span>, with data
             flowing in the opposite direction. The source code that powers this
             flow can be found in the file
-            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c">fe-exec.c</a>,
+            <a
+                href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c"
+                target="_blank"
+                rel="noopener noreferrer">
+                fe-exec.c
+            </a>,
             for client-side logic,
-            <a href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copy.c">copy.c</a> and
-            <a href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copyto.c">copyto.c</a>
+            <a
+                href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copy.c"
+                target="_blank"
+                rel="noopener noreferrer">
+                copy.c
+            </a> and
+            <a
+                href="https://github.com/postgres/postgres/blob/master/src/backend/commands/copyto.c"
+                target="_blank"
+                rel="noopener noreferrer">
+                copyto.c
+            </a>
             for server-side logic.
         </p>
         <p>
             After issuing the <span class="keyword">COPY TO</span> command with
-            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2278"><span class="datapoint">PQexec</span></a>,
+            <a
+                href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2278"
+                target="_blank"
+                rel="noopener noreferrer">
+                <span class="datapoint">PQexec</span>
+            </a>,
             the client receives a result with status
             <span class="datapoint">PGRES_COPY_OUT</span>. Instead of sending
             data, the client repeatedly calls
-            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2832"><span class="datapoint">PQgetCopyData</span></a>
+            <a
+                href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2832"
+                target="_blank"
+                rel="noopener noreferrer">
+                <span class="datapoint">PQgetCopyData</span>
+            </a>
             to read chunks of COPY output generated by the server. The server
             sends data until the COPY stream finishes, after which the client
             retrieves the final <span class="datapoint">PGresult</span> with
-            <a href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2078"><span class="datapoint">PQgetResult</span></a>.
+            <a
+                href="https://github.com/postgres/postgres/blob/master/src/interfaces/libpq/fe-exec.c#L2078"
+                target="_blank"
+                rel="noopener noreferrer">
+                <span class="datapoint">PQgetResult</span>
+            </a>.
         </p>
         <p>
             In a nutshell, <span class="keyword">COPY TO</span> server-side starts
@@ -242,5 +321,169 @@ date: 2026-01-18T12:24:30.086Z
             into COPY protocol messages, and those messages are streamed back to
             the client.
         </p>
+        <p>
+            The following sequence diagram visualises what explained above about
+            the <span class="keyword">COPY TO</span> command.
+        </p>
+        <pre class="mermaid">{% include "articles/pg_copy_command/copy_to.mmd" %}</pre>
+    </section>
+    <section>
+        <h3>When to use <span class="keyword">COPY</span></h3>
+        <p>
+            While <span class="keyword">INSERT</span> and
+            <span class="keyword">SELECT</span> are the standard for day-to-day
+            data manipulation, <span class="keyword">COPY</span> is a specialized
+            tool designed to move large volumes of data with minimal overhead.
+            Typically, <span class="keyword">COPY</span> commands provide a
+            significant performance boost when storing or retrieving 50k+ records.
+        </p>
+        <ol>
+            <li>
+                <span style="font-weight: bold;">Bypassing the SQL Pipeline</span>:
+                Standard <span class="keyword">INSERT</span> statements, even
+                when batched, and <span class="keyword">SELECT</span> statements
+                must go through Postgres's full SQL processing pipeline for
+                each execution. This involves parsing the SQL query, analyzing it
+                to ensure semantic correctness, and planning the optimal execution
+                strategy. For individual rows or small batches, this overhead is
+                negligible. However, when processing thousands or millions of
+                rows, the cumulative CPU cost of repeatedly parsing, analyzing,
+                and planning becomes substantial. The <span class="keyword">COPY</span>
+                command, once initiated, operates as a single, pre-planned bulk
+                operation, drastically reducing this per-row processing overhead.
+            </li>
+            <li>
+                <span style="font-weight: bold;">Reduced WAL Traffic:</span>
+                Postgres employs a
+                <a
+                    href="https://www.Postgres.org/docs/current/wal-intro.html"
+                    target="_blank"
+                    rel="noopener noreferrer">Write-Ahead Log
+                </a>
+                to ensure data durability and recoverability. Every data
+                modification generates WAL records, which are written to disk
+                before the actual data pages are modified. A standard
+                <span class="keyword">INSERT</span> operation typically generates
+                detailed WAL records for each row and its associated transaction
+                metadata. In contrast, <span class="keyword">COPY</span> can
+                write bulk changes more efficiently, often consolidating multiple
+                row insertions into fewer, larger WAL records. This significantly
+                reduces the volume of data written to the WAL, leading to less
+                disk I/O and improved performance, especially on systems with
+                slower storage or high WAL activity.
+            </li>
+            <li>
+                <span style="font-weight: bold;">Efficient Buffer Management:</span>
+                Regular <span class="keyword">INSERT</span> and
+                <span class="keyword">SELECT</span> queries primarily use Postgres's
+                <span style="font-style: italic;">Shared Buffer</span> cache to
+                store frequently accessed data pages. A massive
+                <span class="keyword">INSERT</span> load can lead to cache pollution,
+                where the <span style="font-style: italic;">Shared Buffer</span>
+                becomes filled with new data that might not be immediately reused,
+                pushing out other genuinely hot data that concurrent queries might
+                need. This can degrade the performance of other ongoing operations.
+                <span class="keyword">COPY</span>, however, uses a specialized,
+                dedicated <span style="font-style: italic;">Ring Buffer</span>.
+                This temporary buffer is optimized for sequential writes and
+                minimizes impact on the <span style="font-style: italic;">Shared Buffer</span>,
+                keeping the bulk load isolated and preventing it from slowing
+                down other active queries or causing memory exhaustion.
+            </li>
+            <li>
+                <span style="font-weight: bold;">Minimal Network Overhead:</span>
+                Each individual SQL statement (like an <span class="keyword">INSERT</span>)
+                sent from a client to the Postgres server typically involves a
+                distinct request-response cycle over the network. The
+                <span class="keyword">COPY</span> command, leveraging the libpq
+                streaming capabilities, establishes a single, continuous data
+                stream between the client and the server. This reduces the
+                overhead of many small network packets and transaction initiations,
+                resulting in a much faster and more efficient transfer of bulk
+                data, especially across network connections with higher latency.
+            </li>
+        </ol>
+        <p>
+            Considering these advantages, the <span class="keyword">COPY</span>
+            command truly shines when you are dealing with bulk data operations.
+            For inserting or extracting a few hundred, or even a few thousand rows
+            standard <span class="keyword">INSERT</span> or
+            <span class="keyword">SELECT</span> statements, potentially using
+            multi-row inserts, are often sufficient and simpler to manage.
+            However, when you consistently need to load or unload tens of
+            thousands, hundreds of thousands, or millions of rows, the performance
+            benefits of <span class="keyword">COPY</span> become dramatically
+            apparent.
+        </p>
+    </section>
+    <section>
+        <h3>How <span class="keyword">COPY</span> rescued our data flows</h3>
+        <p>
+            A few months ago, one of our data flows started to fail. Without
+            going to much into details, it relied on inserting large amounts of
+            data into a Postgres database, and it was scheduled to run several
+            times every day.
+        </p>
+        <p>
+            When designing the data flow and the table structure, we focused on
+            making sure that the data was properly indexed for fast retrieval.
+            Luckily, access patterns were limited and very easy to index, which
+            made queries relatively fast, even when the size of the target table
+            scaled into the hundreds of millions of rows. However, we did not
+            take into account that this data flow was write-heavy, involving
+            huge insertions and deletions, at every run. At some point, our RDS
+            instance started to go out of memory, which would cause the data flow to fail.
+        </p>
+        <p>
+            Our first reaction was
+            <span style="font-style: italic; font-weight: 600">"we need a bigger boat"</span>,
+            and we scale up our RDS instance. It almost didn't make a difference at
+            all. Postgres would end up using up all available memory with the same
+            end result. RDS is expensive, scaling up again was not an option.
+            It was at this point, that a colleague suggested using the
+            <span class="keyword">COPY</span> command instead of
+            <span class="keyword">INSERT</span> statements to dump data into
+            Postgres. We quickly reimplemented a couple of methods in the
+            repository layer and gave it a try.
+        </p>
+        <p>
+            The following picture displays the RDS
+            <span style="font-style: italic">Freeable Memory</span> memory during
+            the execution of scheduled data flows, before the scale up, after
+            the scale up and after the introduction of <span class="keyword">COPY</span>:
+        </p>
+        <img style="padding: 0.5rem 0 0.3rem 0;" src="../../assets/rds_pg_mem_usage.jpg" alt="RDS memory usage">
+        <p>
+            The RDS <span style="font-style: italic">Freeable memory</span> is
+            the amount of memory on the RDS instance hosting Postgres, that is
+            not currently allocated to any process in
+            execution. In other words, it is the amount of available memory.
+            <span style="font-style: italic">Freeable memory</span> quickly drops
+            to zero as data flows run, leading to Postgres going out of memory,
+            as it can be evicted in the first  portion of the graph. Scaling up
+            doubled the amount of memory available but it led to the same outcome,
+            as shown in the second portion of the graph.
+            The third portion of the graph displays the
+            <span style="font-style: italic">Freeable Memory</span>
+            after the introduction of <span class="keyword">COPY</span> command.
+            <span style="text-decoration: underline">
+                Memory consumption is drastically reduced. In fact, so much that
+                data flow executions are barely visible in the graph!
+            </span>
+            Eventually, we could scale back down to an instance that was even
+            smaller than the origianl size, saving a bunch of money and daily
+            headaches. Absolutely lovely ❤️!
+        </p>
     </section>
 </div>
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>
+  hljs.highlightAll();
+</script>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+{% endblock %}

@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    participant App as Application
+    participant libpq as libpq (fe-exec.c)
+    participant PG as Postgres (copyto.c)
+
+    Note over App, PG: Initial Command Phase
+    App->>libpq: PQexec("COPY table TO STDOUT")
+    libpq->>PG: Query(COPY TO...)
+    PG->>PG: 1. Query source relation
+    PG-->>libpq: PGRES_COPY_OUT (Ready to send)
+    libpq-->>App: Return PGresult
+
+    Note over App, PG: Streaming Phase (COPY State)
+    loop until server finishes
+        App->>libpq: PQgetCopyData()
+        libpq->>PG: Request next chunk
+        PG->>PG: 2. Convert tuples to format
+        PG->>PG: 3. Serialize to COPY messages
+        PG-->>libpq: CopyData chunk
+        libpq-->>App: Return buffer
+    end
+
+    Note over App, PG: Termination Phase
+    PG-->>libpq: CommandComplete
+    App->>libpq: PQgetResult()
+    libpq-->>App: Final PGresult (Success)

@@ -1,6 +1,7 @@
 {% extends "../_layouts/base.njk" %}
 
 {% block styles %}
+{{ super() }}
 <link rel="stylesheet" href="/css/home.css" />
 {% endblock %}
 
@@ -9,5 +10,6 @@
 {% endblock %}
 
 {% block js %}
+{{ super() }}
 <script defer src="/js/home.js"></script>
 {% endblock %}

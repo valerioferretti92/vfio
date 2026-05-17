@@ -12,9 +12,10 @@ show_code: true
             The Go programming language is well-known and often chosen for its
             powerful concurrency features. However, writing concurrent programs
             remains challenging and prone to subtle bugs. While the Go runtime
-            detects global deadlocks and terminates the program immediately,
-            partial deadlocks go unnoticed. These can lead to memory leaks that
-            necessitate frequent restarts of production services. Go 1.26
+            detects <span class="code">global deadlocks</span> and terminates the
+            program immediately, <span class="code">partial deadlocks</span> go
+            unnoticed. These can lead to <span class="code">memory leaks</span>
+            that necessitate frequent restarts of production services. Go 1.26
             addresses this issue by introducing a new experimental profile that
             leverages the Go garbage collector to detect a wide class of partial
             deadlocks at runtime.
@@ -24,5 +25,124 @@ show_code: true
             <span style="font-style: italic">goroutineleakprofile</span>, its
             theoretical background, how to make use of it, and its limitations.
         </p>
+    </section>
+    <section>
+        <h3>Concurrency in Go</h3>
+        <p>
+            The Go programming language is particularly famous for its concurrency
+            features. It introduces <span style="font-style: italic">goroutines</span>,
+            which are lightweight threads managed and multiplexed by the Go
+            runtime onto operating system threads. This allows programs to handle
+            many concurrent operations with minimal overhead. Goroutines may block
+            when performing operations on concurrency constructs or during system
+            calls (e.g., network or disk IO), at which point the runtime puts
+            them in a waiting state until the necessary unblocking conditions
+            are met.
+        </p>
+        <p>
+            Go provides two primary paradigms for synchronizing goroutines:
+        </p>
+        <ul>
+            <li>
+                <strong>Message Passing</strong>: Using
+                <span class="keyword">chan T</span> to communicate. Goroutines
+                block when sending to or receiving from a channel until a
+                complementary operation occurs. Unbuffered channels require
+                synchronization between sender and receiver, while buffered
+                channels allow asynchronous communication until the buffer is
+                full or empty. The <span class="keyword">select</span> statement
+                allows a goroutine to wait on multiple channel operations
+                simultaneously.
+            </li>
+            <li>
+                <strong>Shared Memory</strong>: Using the
+                <a
+                    href="https://pkg.go.dev/sync"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="datapoint">sync</span>
+                </a>
+                package to manage access to shared state. This includes
+                <a
+                    href="https://pkg.go.dev/sync#Mutex"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="datapoint">mutexes</span>
+                </a>
+                for mutual exclusion,
+                <a
+                    href="https://pkg.go.dev/sync#Cond"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="datapoint">condition variables</span>
+                </a>
+                for signaling, and
+                <a
+                    href="https://pkg.go.dev/sync#WaitGroup"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span class="datapoint">wait groups</span>
+                </a>
+                to synchronize the completion of multiple goroutines.
+            </li>
+        </ul>
+        <p>
+            A goroutine blocked at any of these operations may only be unblocked
+            by another goroutine performing a complementary action. While Go
+            provides intuitive primitives for concurrency, writing robust
+            concurrent software remains challenging and prone to subtle bugs.
+        </p>
+    </section>
+    <section>
+        <h3>Global and partial deadlocks</h3>
+        <p>
+            A program encounters a <span class="datapoint">global deadlock</span>
+            whenever all its goroutines are blocked, waiting to be able to perform
+            an operation on one or more concurrency constructs. Global deadlocks
+            are detected by the Go runtime, which immediately terminates the
+            program.
+        </p>
+        <p>
+            The following example demonstrates a global deadlock in action:
+        </p>
+        <pre><code class="language-go">{% include "articles/goroutine_leak_detection/global-deadlock.go" %}</code></pre>
+        <p>
+            The goroutine at line 10 blocks on the channel operation
+            <span class="keyword">&lt; dataReady</span> at line 12. The main goroutine
+            blocks on the wait group operation
+            <span class="keyword">wg.Wait()</span> at line 16. Neither can proceed.
+            Running the above program will result in a global deadlock and the
+            program will be immediately terminated:
+        </p>
+        <pre><code class="language-shell">{% include "articles/goroutine_leak_detection/global-deadlock-output.txt" %}</code></pre>
+        <p>
+            A program encounters a <span class="datapoint">partial deadlock</span>
+            whenever some goroutines are blocked, but not all. Partial deadlocks
+            are not detected by the Go runtime and the program will continue to
+            run indefinitely.
+            <span style="text-decoration: underline;">
+                While global deadlocks are quite rare in production
+                systems, partial deadlocks are not, and can lead to memeory leaks, as
+                deadlocked goroutines will hang on to resources indefinitely.
+            </span>
+        </p>
+    </section>
+    <section>
+        <h3>Dynamic partial deadlock detection</h3>
+        <ul>
+            <li>The paper vs the profile</li>
+            <li>Semantic and reachable liveness</li>
+            <li>Reachable liveness computation</li>
+        </ul>
+    </section>
+    <section>
+        <h3>Soundness and completeness</h3>
+    </section>
+    <section>
+        <h3>The <span style="font-style: italic;">goroutineleakprofile</span> in action</h3>
     </section>
 </div>

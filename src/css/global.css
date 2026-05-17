@@ -11,6 +11,8 @@
   --strava: 252 133 51; /* #fc8533 */
   --linkedin: 10 133 194; /* #0a85c2 */
   --github: 152 110 226; /* #986ee2 */
+
+  --faint-grey: 150 150 150; /* #969696 */
 }
 
 * {
@@ -57,4 +59,17 @@ a:hover {
 
 .anchor:hover {
   color: rgb(var(--spicy-paprika));
+}
+
+.hljs-ln-numbers {
+  padding-right: 5px !important;
+  color: rgb(var(--faint-grey));
+}
+
+.hljs-ln-code {
+  padding-left: 5px !important;
+}
+
+.language-shell .hljs-ln-code[data-line-number="1"] {
+  font-weight: 575;
 }

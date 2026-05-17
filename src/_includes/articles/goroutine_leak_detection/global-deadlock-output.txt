@@ -1,0 +1,17 @@
+$ go run /home/valerio/examples/goroutine_leak_detection/global-deadlock.go
+fatal error: all goroutines are asleep - deadlock!
+
+goroutine 1 [sync.WaitGroup.Wait]:
+sync.runtime_SemacquireWaitGroup(0x1d271c480018?, 0xe0?)
+	/usr/lib/go/src/runtime/sema.go:114 +0x2e
+sync.(*WaitGroup).Wait(0x1d271c482140)
+	/usr/lib/go/src/sync/waitgroup.go:206 +0x85
+main.main()
+	/home/valerio/examples/goroutine_leak_detection/global-deadlock.go:16 +0x9d
+
+goroutine 6 [chan receive]:
+main.main.func1()
+	/home/valerio/examples/goroutine_leak_detection/global-deadlock.go:11 +0x2a
+created by main.main in goroutine 1
+	/home/valerio/examples/goroutine_leak_detection/global-deadlock.go:10 +0x93
+exit status 2

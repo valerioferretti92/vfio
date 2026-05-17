@@ -1,0 +1,7 @@
+{
+  "languages": {
+    "Go": {
+      "enable_language_server": false,
+    },
+  },
+}

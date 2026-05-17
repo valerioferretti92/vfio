@@ -1,0 +1,28 @@
+---
+layout: article.njk
+title: Goroutine leak detection in Go 1.26
+permalink: /articles/goroutine_leak_detection/index.html
+date: 2026-05-17T10:59:22Z
+show_code: true
+---
+
+<div class="content">
+    <section>
+        <p>
+            The Go programming language is well-known and often chosen for its
+            powerful concurrency features. However, writing concurrent programs
+            remains challenging and prone to subtle bugs. While the Go runtime
+            detects global deadlocks and terminates the program immediately,
+            partial deadlocks go unnoticed. These can lead to memory leaks that
+            necessitate frequent restarts of production services. Go 1.26
+            addresses this issue by introducing a new experimental profile that
+            leverages the Go garbage collector to detect a wide class of partial
+            deadlocks at runtime.
+        </p>
+        <p>
+            This article explores the new, experimental
+            <span style="font-style: italic">goroutineleakprofile</span>, its
+            theoretical background, how to make use of it, and its limitations.
+        </p>
+    </section>
+</div>
